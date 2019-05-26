@@ -25,16 +25,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        button.cpp \
+        compass.cpp \
+        dashboard.cpp \
+        dot.cpp \
+        game.cpp \
         main.cpp \
-        mainwindow.cpp
+        pacman.cpp \
+        pellet.cpp
 
 HEADERS += \
-        mainwindow.h
+        button.h \
+        character.h \
+        compass.h \
+        dashboard.h \
+        dot.h \
+        game.h \
+        item.h \
+        pacman.h \
+        pellet.h
 
-FORMS += \
-        mainwindow.ui
+FORMS +=
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    src.qrc
