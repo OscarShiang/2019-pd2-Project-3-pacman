@@ -5,6 +5,7 @@ Inky::Inky(Compass *compass_ipt): Ghost (compass_ipt), compass(compass_ipt) {
     loadPicture(":/pic/ghost/inky/");
     setDirection(Dir::Right);
     setCritical(QPoint(27, 27));
+    setKind('i');
 }
 
 QPoint Inky::setTarget() {

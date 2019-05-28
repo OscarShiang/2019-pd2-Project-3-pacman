@@ -12,6 +12,7 @@ public:
     Pacman(Compass *compass_ipt);
 
     void setDirection(QPoint dir);
+    void die();
 
 public slots:
     void move();
@@ -21,8 +22,11 @@ private:
     QPoint direction;
     QPoint tmpDir;
     QTimer *switchTimer;
-    QPixmap pic[3];
+    QPixmap pic[3], disolve[11];
     Compass *compass;
+    int index, add;
+
+    bool dead;
 };
 
 #endif // PACMAN_H

@@ -14,34 +14,37 @@ public:
     void move();
     void setDirection(QPoint dir);
     void chase();
+    void die();
+    void setKind(char ipt);
 
     virtual QPoint setTarget() = 0;
 
     void loadPicture(QString filepath);
-
     void setCritical(QPoint pt);
-
-    QPoint getDirection();
-    QPoint getTmpDirection();
 
     static qreal distance(QPoint a, QPoint b);
 
 public slots:
     void switchAnimate();
     void changeMode();
+    void nerfInterval();
+    void timeLeft();
 
 private:
-    QPoint direction;
+    QPointF direction;
     QPoint tmpDir;
     QPoint target;
     QPoint critical;
     QPixmap pic[4][2];
     QPixmap fright[2][2];
-    QTimer *switchTimer, *chaseTimer;
+    QTimer *switchTimer, *chaseTimer, *nerfTimer;
     Compass *compass;
     bool nerf;
-    int index;
-    int mode;
+    int index_i, index_j;
+    int mode, prevMode;
+    int remainNerf;
+    qreal step_size;
+    char kind;
 
     enum Mode {
         Scatter,Frighten, Chase

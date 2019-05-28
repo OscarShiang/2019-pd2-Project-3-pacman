@@ -13,12 +13,13 @@ Game::Game() {
     // create the scene
     scene = new QGraphicsScene(this);
     scene->setSceneRect(0, 0, width, height);
-    scene->setBackgroundBrush(QPixmap(":/pic/map/map.png").scaledToHeight(564));
+    scene->setBackgroundBrush(QPixmap(":/pic/map/map_test.png").scaledToHeight(564));
     setScene(scene);
 
     // create the compass item
     compass = new Compass(this);
     connect(compass, SIGNAL(eat(QPoint)), this, SLOT(itemEat(QPoint)));
+    connect(compass, SIGNAL(fail()), this, SLOT(gameFail()));
 
     mode = Mode::Menu;
 
@@ -58,7 +59,6 @@ Game::Game() {
     connect(mv, SIGNAL(timeout()), inky, SLOT(move()));
     connect(mv, SIGNAL(timeout()), clyde, SLOT(move()));
 
-
     // create the dashboard
     board = new Dashboard(this);
     scene->addItem(board);
@@ -79,7 +79,6 @@ Game::Game() {
     connect(play, SIGNAL(clicked()), this, SLOT(gameStart()));
     connect(quit, SIGNAL(clicked()), this, SLOT(close()));
 
-
     show();
 }
 
@@ -92,8 +91,9 @@ void Game::keyPressEvent(QKeyEvent *event) {
         player->setDirection(Dir::Left);
     else if (event->key() == Qt::Key_Right)
         player->setDirection(Dir::Right);
-    else if (event->key() == Qt::Key_Space)
-        qDebug() << player->pos();
+    else if (event->key() == Qt::Key_Space) {
+        player->die();
+    }
 }
 
 void Game::putDots() {
@@ -117,7 +117,9 @@ void Game::putDots() {
 }
 
 void Game::itemEat(QPoint pos) {
-    item[pos.x()][pos.y()]->eaten();
+    if (mode == Mode::Play) {
+        item[pos.x()][pos.y()]->eaten();
+    }
 }
 
 void Game::pause() {
@@ -138,7 +140,6 @@ void Game::dotsAte() {
 }
 
 void Game::pelletAte() {
-    // power up
     board->addScore(50);
 }
 
@@ -150,7 +151,7 @@ void Game::gameStart() {
     putDots();
 
     // set timer start
-    mv->start(20);
+    mv->start(10);
     shine->start(300);
 
     player->setPos(width / 2 - player->boundingRect().width() / 2 + 7, 403);
@@ -171,4 +172,23 @@ void Game::gameStart() {
 
 void Game::gameClear() {
     // game clear
+}
+
+void Game::gameFail() {
+    mode = Mode::Result;
+    mv->stop();
+    blinky->hide();
+    pinky->hide();
+    inky->hide();
+    clyde->hide();
+
+    player->die();
+    clearDots();
+}
+
+void Game::clearDots() {
+    QList <QPoint> list = compass->remainDots();
+    foreach(QPoint pos, list) {
+        delete item[pos.x()][pos.y()];
+    }
 }

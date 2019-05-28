@@ -4,6 +4,7 @@ Clyde::Clyde(Compass *compass_ipt): Ghost (compass_ipt), compass(compass_ipt) {
     loadPicture(":/pic/ghost/clyde/");
     setCritical(QPoint(27, 1));
     setDirection(Dir::Left);
+    setKind('c');
 }
 
 QPoint Clyde::setTarget() {

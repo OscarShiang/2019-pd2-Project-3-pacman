@@ -24,6 +24,7 @@ public:
 
     void keyPressEvent(QKeyEvent *event);
     void putDots();
+    void clearDots();
     void pause();
     void resume();
 
@@ -38,6 +39,7 @@ public slots:
     void pelletAte();
 
     void gameStart();
+    void gameFail();
 
 private:
     const int width = 448;
@@ -62,7 +64,7 @@ private:
 };
 
 enum Mode {
-    Menu, Pause, Play
+    Menu, Pause, Play, Result
 };
 
 #endif // GAME_H

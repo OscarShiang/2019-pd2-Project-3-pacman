@@ -9,7 +9,7 @@ Pinky::Pinky(Compass *compass_ipt): Ghost(compass_ipt), compass(compass_ipt) {
     setDirection(Dir::Left);
     loadPicture(":/pic/ghost/pinky/");
     setCritical(QPoint(1, 1));
-
+    setKind('p');
 }
 
 QPoint Pinky::setTarget() {

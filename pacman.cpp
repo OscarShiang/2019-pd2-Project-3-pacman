@@ -9,11 +9,16 @@ Pacman::Pacman(Compass *compass_ipt) {
 
     // load the picture in
     for (int i = 0; i < 3; i ++) {
-        pic[i].load("://pic/pacman/" + QString::number(i) + ".png");
+        pic[i].load(":/pic/pacman/" + QString::number(i) + ".png");
         pic[i] = pic[i].scaledToHeight(30);
     }
     setPixmap(pic[0]);
     setTransformOriginPoint(boundingRect().width() / 2 - 7, boundingRect().height() / 2 - 7);
+
+    for (int i = 0; i < 11; i ++) {
+        disolve[i].load(":/pic/pacman/dead/" + QString::number(i) + ".png");
+        disolve[i] = disolve[i].scaledToHeight(30);
+    }
 
     // set the timer for moving
     switchTimer = new QTimer();
@@ -24,9 +29,14 @@ Pacman::Pacman(Compass *compass_ipt) {
     compass = compass_ipt;
     compass->setLoc(QPoint(14, 16), 'p');
 
+    index = 0;
+    add = 1;
+    dead = false;
 }
 
 void Pacman::move() {
+    if (dead)
+        return;
     // handling bounding
     if (y() == 259. && (x() < 0 || x() >= 448)) {
         if (tmpDir == Dir::Left || tmpDir == Dir::Right)
@@ -44,7 +54,7 @@ void Pacman::move() {
     }
     // handling normal move
     else if (int(y() - 35) % 16 == 0 && int(x()) % 16 == 0) {
-        compass->setLoc(QPoint(int(y() - 35) / 16, int(x()) / 16), 'p');
+        compass->setLoc(QPoint(int(y() - 35) / 16, int(x()) / 16), 'a');
         if (tmpDir != direction && compass->canMove(pos(), tmpDir)) {
             direction = tmpDir;
             if (direction == Dir::Up)
@@ -58,7 +68,7 @@ void Pacman::move() {
         }
         else if (compass->canMove(pos(), direction)) {
             compass->check(pos(), direction);
-            setPos(pos() + direction * 2);
+            setPos(pos() + direction);
             switchTimer->start();
         }
         else {
@@ -68,7 +78,7 @@ void Pacman::move() {
         }
     }
     else
-        setPos(pos() + direction * 2);
+        setPos(pos() + direction);
 }
 
 void Pacman::setDirection(QPoint dir) {
@@ -83,9 +93,30 @@ void Pacman::setDirection(QPoint dir) {
 }
 
 void Pacman::switchAnimate() {
-    static int i = 0, add = 1;
-    setPixmap(pic[i]);
-    i += add;
-    if (i >= 2 || i <= 0)
-        add = -add;
+    if (!dead) {
+        setPixmap(pic[index]);
+        index += add;
+        if (index >= 2 || index <= 0)
+            add = -add;
+    }
+    else {
+        setPixmap(disolve[index]);
+        index += add;
+        if (index > 10) {
+            switchTimer->stop();
+            dead = false;
+            hide();
+        }
+
+    }
+}
+
+void Pacman::die() {
+    qDebug() << "die";
+    dead = true;
+    switchTimer->stop();
+    setRotation(0);
+    switchTimer->start(50);
+    index = 0;
+    add = 1;
 }

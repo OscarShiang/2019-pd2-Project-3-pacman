@@ -7,6 +7,7 @@ Blinky::Blinky(Compass *compass_ipt): Ghost (compass_ipt), compass(compass_ipt) 
     loadPicture(":/pic/ghost/blinky/");
     setDirection(Dir::Right);
     setCritical(QPoint(1, 27));
+    setKind('b');
 }
 
 QPoint Blinky::setTarget() {
