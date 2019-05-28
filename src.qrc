@@ -1,8 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>pic/pacman/1.png</file>
-        <file>pic/pacman/2.png</file>
-        <file>pic/pacman/3.png</file>
         <file>font/pixel.ttf</file>
         <file>pic/map/map_test.png</file>
         <file>pic/map/map.png</file>
@@ -49,5 +46,8 @@
         <file>pic/ghost/nerf/nerf11.png</file>
         <file>pic/ghost/nerf/nerf12.png</file>
         <file>pic/item/title.png</file>
+        <file>pic/pacman/0.png</file>
+        <file>pic/pacman/1.png</file>
+        <file>pic/pacman/2.png</file>
     </qresource>
 </RCC>

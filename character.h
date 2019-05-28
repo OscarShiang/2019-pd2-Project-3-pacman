@@ -3,11 +3,16 @@
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
+#include <cmath>
 
 class Character: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 public:
     virtual void setDirection(QPoint dir) = 0;
+    static qreal distance(QPoint a, QPoint b) {
+        QPoint vector = b - a;
+        return sqrt(pow(vector.x(), 2) + pow(vector.y(), 2));
+    }
 
 public slots:
     virtual void move() = 0;

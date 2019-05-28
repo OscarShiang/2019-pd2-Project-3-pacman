@@ -59,7 +59,7 @@ void Compass::initMap() {
         {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
         {-1, -1, -1, -1, -1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -1, -1, -1, -1, -1},
         {-1, -1, -1, -1, -1, 0, 1, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 1, 0, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, 0, 1, 0, 0, -1, 0, 0, 0, -1, -1, 0, 0, 0, -1, 0, 0, 1, 0, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, -1, -1, -1, -1, -1},
         {0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0},
         {-1, -1, -1, -1, -1, -1, 1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1},
         {0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0},
@@ -81,7 +81,7 @@ void Compass::initMap() {
     };
 }
 
-void Compass::check(QPointF pos) {
+void Compass::check(QPointF pos, QPoint dir) {
     int x = int(pos.y() - 35) / 16;
     int y = int(pos.x()) / 16;
 
@@ -89,5 +89,28 @@ void Compass::check(QPointF pos) {
         emit eat(QPoint(x, y));
         map[x][y] = -1;
     }
+    dir_player = dir;
 }
 
+QPoint Compass::getPlayerPos() {
+    return player;
+}
+
+void Compass::setLoc(QPoint pos, char charcter) {
+    switch (charcter) {
+    case 'p':
+        player = pos;
+        break;
+    case 'b':
+        blinky = pos;
+        break;
+    }
+}
+
+QPoint Compass::getPlayerDir() {
+    return dir_player;
+}
+
+QPoint Compass::getBlinkyPos() {
+    return blinky;
+}

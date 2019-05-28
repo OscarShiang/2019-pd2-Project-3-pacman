@@ -30,9 +30,33 @@ Game::Game() {
     scene->addItem(player);
     player->hide();
 
+    // create the ghost
+    blinky = new Blinky(compass);
+    scene->addItem(blinky);
+    blinky->setPos(32, 51);
+
+    pinky = new Pinky(compass);
+    scene->addItem(pinky);
+    pinky->setPos(416, 51);
+
+    inky = new Inky(compass);
+    scene->addItem(inky);
+    inky->setPos(16, 499);
+
+    clyde = new Clyde(compass);
+    scene->addItem(clyde);
+    clyde->setPos(416, 499);
+
     // create the move timer
     mv = new QTimer(this);
+    // player move
     connect(mv, SIGNAL(timeout()), player, SLOT(move()));
+
+    // ghost move
+    connect(mv, SIGNAL(timeout()), blinky, SLOT(move()));
+    connect(mv, SIGNAL(timeout()), pinky, SLOT(move()));
+    connect(mv, SIGNAL(timeout()), inky, SLOT(move()));
+    connect(mv, SIGNAL(timeout()), clyde, SLOT(move()));
 
 
     // create the dashboard
@@ -55,6 +79,7 @@ Game::Game() {
     connect(play, SIGNAL(clicked()), this, SLOT(gameStart()));
     connect(quit, SIGNAL(clicked()), this, SLOT(close()));
 
+
     show();
 }
 
@@ -67,6 +92,8 @@ void Game::keyPressEvent(QKeyEvent *event) {
         player->setDirection(Dir::Left);
     else if (event->key() == Qt::Key_Right)
         player->setDirection(Dir::Right);
+    else if (event->key() == Qt::Key_Space)
+        qDebug() << player->pos();
 }
 
 void Game::putDots() {
@@ -126,7 +153,7 @@ void Game::gameStart() {
     mv->start(20);
     shine->start(300);
 
-    player->setPos(16, 51);
+    player->setPos(width / 2 - player->boundingRect().width() / 2 + 7, 403);
 
     remainDots = 244;
 

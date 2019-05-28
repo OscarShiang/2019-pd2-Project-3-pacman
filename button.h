@@ -6,6 +6,7 @@
 #include <QGraphicsTextItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
+#include <QTimer>
 
 class Button: public QObject, public QGraphicsItemGroup {
     Q_OBJECT
@@ -22,11 +23,16 @@ public:
 signals:
     void clicked();
 
+public slots:
+    void change();
+
 private:
     QGraphicsTextItem *text;
     QGraphicsPixmapItem *icon;
     const QString font_family = "Joystix";
     int font_size;
+    QTimer *timer;
+    QPixmap pic[3];
 };
 
 #endif // BUTTON_H

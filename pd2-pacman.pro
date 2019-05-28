@@ -25,25 +25,35 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        blinky.cpp \
         button.cpp \
+        clyde.cpp \
         compass.cpp \
         dashboard.cpp \
         dot.cpp \
         game.cpp \
+        ghost.cpp \
+        inky.cpp \
         main.cpp \
         pacman.cpp \
-        pellet.cpp
+        pellet.cpp \
+        pinky.cpp
 
 HEADERS += \
+        blinky.h \
         button.h \
         character.h \
+        clyde.h \
         compass.h \
         dashboard.h \
         dot.h \
         game.h \
+        ghost.h \
+        inky.h \
         item.h \
         pacman.h \
-        pellet.h
+        pellet.h \
+        pinky.h
 
 FORMS +=
 

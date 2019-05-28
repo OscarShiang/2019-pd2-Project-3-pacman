@@ -10,6 +10,11 @@
 #include "compass.h"
 #include "item.h"
 #include "dashboard.h"
+#include "ghost.h"
+#include "blinky.h"
+#include "pinky.h"
+#include "inky.h"
+#include "clyde.h"
 #include "button.h"
 
 class Game: public QGraphicsView {
@@ -51,7 +56,7 @@ private:
     // buttons
     Button *test;
 
-    Character *player;
+    Character *player, *blinky, *pinky, *inky, *clyde;
     Compass *compass;
     QTimer *mv, *shine;
 };

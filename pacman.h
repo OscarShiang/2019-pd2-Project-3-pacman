@@ -23,7 +23,6 @@ private:
     QTimer *switchTimer;
     QPixmap pic[3];
     Compass *compass;
-    int map[10][10];
 };
 
 #endif // PACMAN_H
