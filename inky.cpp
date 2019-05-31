@@ -14,8 +14,6 @@ QPoint Inky::setTarget() {
     QPoint dire = compass->getPlayerDir();
 
     QPoint target = blinky + 2 * (pacman + 2 * QPoint(dire.y(), dire.x()) - blinky);
-    if (target.x() < 0 || target.x() > 30 || target.y() < 0 || target.y() > 27) {
-        target = compass->getPlayerPos();
-    }
+
     return target;
 }

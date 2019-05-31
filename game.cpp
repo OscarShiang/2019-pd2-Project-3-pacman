@@ -13,7 +13,7 @@ Game::Game() {
     // create the scene
     scene = new QGraphicsScene(this);
     scene->setSceneRect(0, 0, width, height);
-    scene->setBackgroundBrush(QPixmap(":/pic/map/map_test.png").scaledToHeight(564));
+    scene->setBackgroundBrush(QPixmap(":/pic/map/map.png").scaledToHeight(564));
     setScene(scene);
 
     // create the compass item
@@ -23,7 +23,7 @@ Game::Game() {
 
     mode = Mode::Menu;
 
-    // create the shining timer
+    // create the shining timer for power pellets shine
     shine = new QTimer(this);
 
     // create the pacman (the player)
@@ -49,15 +49,17 @@ Game::Game() {
     clyde->setPos(416, 499);
 
     // create the move timer
-    mv = new QTimer(this);
+    pacmanMove = new QTimer(this);
     // player move
-    connect(mv, SIGNAL(timeout()), player, SLOT(move()));
+    connect(pacmanMove, SIGNAL(timeout()), player, SLOT(move()));
+
+    ghostMove = new QTimer(this);
 
     // ghost move
-    connect(mv, SIGNAL(timeout()), blinky, SLOT(move()));
-    connect(mv, SIGNAL(timeout()), pinky, SLOT(move()));
-    connect(mv, SIGNAL(timeout()), inky, SLOT(move()));
-    connect(mv, SIGNAL(timeout()), clyde, SLOT(move()));
+    connect(ghostMove, SIGNAL(timeout()), blinky, SLOT(move()));
+    connect(ghostMove, SIGNAL(timeout()), pinky, SLOT(move()));
+    connect(ghostMove, SIGNAL(timeout()), inky, SLOT(move()));
+    connect(ghostMove, SIGNAL(timeout()), clyde, SLOT(move()));
 
     // create the dashboard
     board = new Dashboard(this);
@@ -123,12 +125,14 @@ void Game::itemEat(QPoint pos) {
 }
 
 void Game::pause() {
-    mv->stop();
+    pacmanMove->stop();
+    ghostMove->stop();
     shine->stop();
 }
 
 void Game::resume() {
-    mv->start();
+    pacmanMove->start();
+    ghostMove->stop();
     shine->start();
 }
 
@@ -151,7 +155,8 @@ void Game::gameStart() {
     putDots();
 
     // set timer start
-    mv->start(10);
+    pacmanMove->start(20);
+    ghostMove->start(25);
     shine->start(300);
 
     player->setPos(width / 2 - player->boundingRect().width() / 2 + 7, 403);
@@ -176,7 +181,7 @@ void Game::gameClear() {
 
 void Game::gameFail() {
     mode = Mode::Result;
-    mv->stop();
+    pacmanMove->stop();
     blinky->hide();
     pinky->hide();
     inky->hide();

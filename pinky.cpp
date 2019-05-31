@@ -16,8 +16,5 @@ QPoint Pinky::setTarget() {
     QPoint target = compass->getPlayerPos(), dire = compass->getPlayerDir();
     target += 4 * QPoint(dire.y(), dire.x());
 
-    if (target.x() < 0 || target.x() > 30 || target.y() < 0 || target.y() > 27) {
-        target = compass->getPlayerPos();
-    }
     return target;
 }

@@ -21,7 +21,7 @@ Ghost::Ghost(Compass *compass_ipt): compass(compass_ipt) {
 
     mode = Mode::Chase;
 
-    step_size = 1;
+    step_size = 2;
 
     for (int i = 0; i < 2; i ++) {
         for (int j = 0; j < 2; j ++) {
@@ -36,15 +36,15 @@ Ghost::Ghost(Compass *compass_ipt): compass(compass_ipt) {
 }
 
 void Ghost::move() {
-    if (y() == 259. && (x() < 0 || x() >= 448)) {
-        if (tmpDir == Dir::Left || tmpDir == Dir::Right)
-            direction = tmpDir;
+    if ((x() < 0 || x() >= 448)) {
         setPos(pos() + direction * 2);
 
-        if (x() < -30)
-            setX(478);
-        else if (x() > 478)
-            setX(-30);
+        if (x() < -32){
+            setX(448);
+        }
+        else if (x() > 480) {
+            setX(-32);
+        }
     }
     else if (int(y() - 35) % 16 == 0 && int(x()) % 16 == 0) {
         chase();
@@ -68,8 +68,9 @@ void Ghost::move() {
             }
         }
     }
-    else
+    else {
         setPos(pos() + direction * step_size);
+    }
 }
 
 void Ghost::setDirection(QPoint dir) {

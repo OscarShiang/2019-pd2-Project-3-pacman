@@ -5,7 +5,7 @@ Compass::Compass(QObject *parent): QObject (parent) {
     initMap();
 }
 
-bool Compass::canMove(QPointF pos, QPoint direction) {
+bool Compass::canMove(QPointF pos, QPointF direction) {
     int x = int(pos.y() - 35) / 16;
     int y = int(pos.x()) / 16;
 
@@ -87,6 +87,8 @@ void Compass::check(QPointF pos, QPoint dir) {
 
     if (map[x][y] != 0 && map[x][y] != -1) {
         emit eat(QPoint(x, y));
+        if (map[x][y] == 2)
+            emit powerUp();
         map[x][y] = -1;
     }
     dir_player = dir;
@@ -98,11 +100,22 @@ QPoint Compass::getPlayerPos() {
 
 void Compass::setLoc(QPoint pos, char charcter) {
     switch (charcter) {
-    case 'p':
+    case 'a':
         player = pos;
+        if (!nerf && (player == blinky || player == pinky || player == clyde || player == inky))
+            emit fail();
         break;
     case 'b':
         blinky = pos;
+        break;
+    case 'i':
+        inky = pos;
+        break;
+    case 'p':
+        pinky = pos;
+        break;
+    case 'c':
+        clyde = pos;
         break;
     }
 }
@@ -113,4 +126,22 @@ QPoint Compass::getPlayerDir() {
 
 QPoint Compass::getBlinkyPos() {
     return blinky;
+}
+
+void Compass::setPowerUp(bool ipt) {
+    if (ipt)
+        nerf = ipt;
+    else
+        nerf = ipt;
+}
+
+QList <QPoint> Compass::remainDots() {
+    QList <QPoint> list;
+    for (int i = 0; i < 31; i ++) {
+        for (int j = 0; j < 28; j ++) {
+            if (map[i][j] == 1 || map[i][j] == 2)
+                list.push_back(QPoint(i, j));
+        }
+    }
+    return list;
 }

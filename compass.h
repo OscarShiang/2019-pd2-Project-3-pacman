@@ -12,22 +12,27 @@ public:
     void initMap();
     void check(QPointF pos, QPoint dir);
 
-    bool canMove(QPointF pos, QPoint direction);
+    bool canMove(QPointF pos, QPointF direction);
     QList <QPoint> dots();
     QList <QPoint> pellets();
+    QList <QPoint> remainDots();
 
     void setLoc(QPoint pos, char charcter);
+    void setPowerUp(bool ipt);
     QPoint getPlayerPos();
     QPoint getPlayerDir();
     QPoint getBlinkyPos();
 
 signals:
     void eat(QPoint pos);
+    void powerUp();
+    void fail();
 
 private:
     QList <QList <int> > map;
-    QPoint player, blinky;
+    QPoint player, blinky, inky, pinky, clyde;
     QPoint dir_player;
+    bool nerf;
 };
 
 

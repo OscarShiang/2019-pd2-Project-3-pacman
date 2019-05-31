@@ -68,7 +68,7 @@ void Pacman::move() {
         }
         else if (compass->canMove(pos(), direction)) {
             compass->check(pos(), direction);
-            setPos(pos() + direction);
+            setPos(pos() + direction * 2);
             switchTimer->start();
         }
         else {
@@ -78,7 +78,7 @@ void Pacman::move() {
         }
     }
     else
-        setPos(pos() + direction);
+        setPos(pos() + direction * 2);
 }
 
 void Pacman::setDirection(QPoint dir) {

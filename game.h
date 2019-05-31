@@ -60,7 +60,7 @@ private:
 
     Character *player, *blinky, *pinky, *inky, *clyde;
     Compass *compass;
-    QTimer *mv, *shine;
+    QTimer *pacmanMove, *shine, *ghostMove;
 };
 
 enum Mode {
