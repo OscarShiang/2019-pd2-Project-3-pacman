@@ -12,6 +12,8 @@ public:
     Ghost(Compass *compass);
 
     void move();
+    void start();
+    void pause();
     void setDirection(QPoint dir);
     void chase();
     void die();

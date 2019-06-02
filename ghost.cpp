@@ -215,9 +215,8 @@ void Ghost::nerfInterval() {
 void Ghost::timeLeft() {
     remainNerf --;
     if (remainNerf <= 3)
-        shine->start(250);
+        shine->start(200);
     if (remainNerf <= 0) {
-        qDebug() << "end";
         chaseTimer->start();
         mode = prevMode;
         shine->stop();
@@ -229,6 +228,7 @@ void Ghost::die() {
     step_size = 2;
     mode = Mode::Dead;
     nerfTimer->stop();
+    shine->stop();
     setPos(int(x()) / 16 * 16, int(y() - 35) / 16 * 16 + 35);
     qDebug() << "the ghost is dead" << pos();
     chaseTimer->stop();
@@ -263,4 +263,19 @@ void Ghost::shining() {
     index_i ++;
     index_i %= 2;
     setPixmap(fright[index_i][index_j]);
+}
+
+void Ghost::pause() {
+    chaseTimer->stop();
+    nerfTimer->stop();
+    shine->stop();
+    switchTimer->stop();
+}
+
+void Ghost::start() {
+    switchTimer->start();
+    if (mode == Mode::Frighten)
+        nerfTimer->start();
+    else
+        chaseTimer->start();
 }

@@ -121,3 +121,11 @@ void Pacman::die() {
     index = 0;
     add = 1;
 }
+
+void Pacman::pause() {
+    switchTimer->stop();
+}
+
+void Pacman::start() {
+    switchTimer->start();
+}

@@ -28,6 +28,14 @@ public:
     void pause();
     void resume();
 
+    void wait(qreal msec);
+
+    // panel control
+    void menuPanel(bool ipt);
+    void playPanel(bool ipt);
+    void resultPanel(bool ipt);
+
+    // mode control
     void displayMenu();
     void gameClear();
 
@@ -37,7 +45,9 @@ public slots:
     void itemEat(QPoint pos);
     void dotsAte();
     void pelletAte();
+    void countDown();
 
+    // end game control
     void gameStart();
     void gameFail();
 
@@ -47,6 +57,7 @@ private:
 
     int mode;
     int remainDots;
+    int times;
 
     QGraphicsScene *scene;
     Item *item[31][28];
@@ -58,9 +69,10 @@ private:
     // buttons
     Button *test;
 
+    // for game playing
     Character *player, *blinky, *pinky, *inky, *clyde;
     Compass *compass;
-    QTimer *pacmanMove, *shine, *ghostMove;
+    QTimer *pacmanMove, *shine, *ghostMove, *lag;
 };
 
 enum Mode {

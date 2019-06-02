@@ -12,6 +12,8 @@ public:
     Pacman(Compass *compass_ipt);
 
     void setDirection(QPoint dir);
+    void start();
+    void pause();
     void die();
 
 public slots:

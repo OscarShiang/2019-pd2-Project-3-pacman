@@ -10,6 +10,8 @@ class Character: public QObject, public QGraphicsPixmapItem {
 public:
     virtual void setDirection(QPoint dir) = 0;
     virtual void die() = 0;
+    virtual void start() = 0;
+    virtual void pause() = 0;
 
 public slots:
     virtual void move() = 0;

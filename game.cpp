@@ -25,6 +25,10 @@ Game::Game() {
     // create the shining timer for power pellets shine
     shine = new QTimer(this);
 
+    // create the lag timer for anytime the game should pause a little
+    lag = new QTimer(this);
+    connect(lag, SIGNAL(timeout()), this, SLOT(countDown()));
+
     // create the pacman (the player)
     player = new Pacman(compass);
     scene->addItem(player);
@@ -98,7 +102,7 @@ void Game::keyPressEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Right)
         player->setDirection(Dir::Right);
     else if (event->key() == Qt::Key_Space) {
-        qDebug() << player->pos();
+        wait(1);
     }
 }
 
@@ -132,17 +136,32 @@ void Game::pause() {
     pacmanMove->stop();
     ghostMove->stop();
     shine->stop();
+
+    // turn off the timer on the character
+    player->pause();
+    blinky->pause();
+    inky->pause();
+    pinky->pause();
+    clyde->pause();
 }
 
 void Game::resume() {
     pacmanMove->start();
-    ghostMove->stop();
+    ghostMove->start();
     shine->start();
+
+    // turn on all timers on the objects
+    player->start();
+    blinky->start();
+    inky->start();
+    pinky->start();
+    clyde->start();
 }
 
 void Game::dotsAte() {
     board->addScore(10);
     remainDots --;
+    qDebug() << remainDots;
     if (!remainDots)
         gameClear();
 }
@@ -160,27 +179,25 @@ void Game::gameStart() {
 
     // set timer start
     pacmanMove->start(20);
-    ghostMove->start(10);
+    ghostMove->start(11);
     shine->start(300);
 
     player->setPos(width / 2 - player->boundingRect().width() / 2 + 7, 403);
 
-    remainDots = 244;
+    remainDots = 240;
 
     board->reset();
 
     // hide the items not used in playing mode
-    title->hide();
-    play->hide();
-    quit->hide();
+    menuPanel(false);
 
     // show the items
-    player->show();
-    board->show();
+    playPanel(true);
 }
 
 void Game::gameClear() {
     // game clear
+    qDebug() << "endgame";
 }
 
 void Game::gameFail() {
@@ -201,5 +218,58 @@ void Game::clearDots() {
     foreach(QPoint pos, list) {
         qDebug() << pos;
         delete item[pos.x()][pos.y()];
+    }
+}
+
+void Game::menuPanel(bool ipt) {
+    if (ipt) {
+        title->show();
+        play->show();
+        quit->show();
+    }
+    else {
+        title->hide();
+        play->hide();
+        quit->hide();
+    }
+}
+
+void Game::playPanel(bool ipt) {
+    if (ipt) {
+        // show the character
+        player->show();
+        blinky->show();
+        inky->show();
+        pinky->show();
+        clyde->show();
+
+        board->show();
+    }
+    else {
+        player->hide();
+        blinky->hide();
+        inky->hide();
+        pinky->hide();
+        clyde->hide();
+
+        board->hide();
+    }
+}
+
+void Game::wait(qreal msec) {
+    if (mode != Mode::Play)
+        return;
+    mode = Mode::Pause;
+    lag->start(int(1000 * msec));
+    pause();
+    times = 1;
+}
+
+void Game::countDown() {
+    times --;
+    if (!times) {
+        mode = Mode::Play;
+        lag->stop();
+        resume();
     }
 }
