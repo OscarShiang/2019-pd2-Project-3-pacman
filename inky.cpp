@@ -10,7 +10,7 @@ Inky::Inky(Compass *compass_ipt): Ghost (compass_ipt), compass(compass_ipt) {
 
 QPoint Inky::setTarget() {
     QPoint blinky = compass->getBlinkyPos();
-    QPoint pacman = compass->getPlayerPos();
+    QPoint pacman = compass->getPlayerLoc();
     QPoint dire = compass->getPlayerDir();
 
     QPoint target = blinky + 2 * (pacman + 2 * QPoint(dire.y(), dire.x()) - blinky);

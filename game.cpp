@@ -19,7 +19,6 @@ Game::Game() {
     // create the compass item
     compass = new Compass(this);
     connect(compass, SIGNAL(eat(QPoint)), this, SLOT(itemEat(QPoint)));
-    connect(compass, SIGNAL(fail()), this, SLOT(gameFail()));
 
     mode = Mode::Menu;
 
@@ -61,6 +60,11 @@ Game::Game() {
     connect(ghostMove, SIGNAL(timeout()), inky, SLOT(move()));
     connect(ghostMove, SIGNAL(timeout()), clyde, SLOT(move()));
 
+    connect(blinky, SIGNAL(fail()), this, SLOT(gameFail()));
+    connect(pinky, SIGNAL(fail()), this, SLOT(gameFail()));
+    connect(inky, SIGNAL(fail()), this, SLOT(gameFail()));
+    connect(clyde, SIGNAL(fail()), this, SLOT(gameFail()));
+
     // create the dashboard
     board = new Dashboard(this);
     scene->addItem(board);
@@ -94,7 +98,7 @@ void Game::keyPressEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Right)
         player->setDirection(Dir::Right);
     else if (event->key() == Qt::Key_Space) {
-        player->die();
+        qDebug() << player->pos();
     }
 }
 
@@ -156,7 +160,7 @@ void Game::gameStart() {
 
     // set timer start
     pacmanMove->start(20);
-    ghostMove->start(25);
+    ghostMove->start(10);
     shine->start(300);
 
     player->setPos(width / 2 - player->boundingRect().width() / 2 + 7, 403);
@@ -182,6 +186,7 @@ void Game::gameClear() {
 void Game::gameFail() {
     mode = Mode::Result;
     pacmanMove->stop();
+    ghostMove->stop();
     blinky->hide();
     pinky->hide();
     inky->hide();
@@ -194,6 +199,7 @@ void Game::gameFail() {
 void Game::clearDots() {
     QList <QPoint> list = compass->remainDots();
     foreach(QPoint pos, list) {
+        qDebug() << pos;
         delete item[pos.x()][pos.y()];
     }
 }

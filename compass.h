@@ -18,8 +18,10 @@ public:
     QList <QPoint> remainDots();
 
     void setLoc(QPoint pos, char charcter);
+    void setPos(QPointF pos);
     void setPowerUp(bool ipt);
-    QPoint getPlayerPos();
+    QPoint getPlayerLoc();
+    QPointF getPlayerPos();
     QPoint getPlayerDir();
     QPoint getBlinkyPos();
 
@@ -32,6 +34,7 @@ private:
     QList <QList <int> > map;
     QPoint player, blinky, inky, pinky, clyde;
     QPoint dir_player;
+    QPointF player_pos;
     bool nerf;
 };
 

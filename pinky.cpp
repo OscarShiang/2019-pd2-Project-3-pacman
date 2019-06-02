@@ -13,7 +13,7 @@ Pinky::Pinky(Compass *compass_ipt): Ghost(compass_ipt), compass(compass_ipt) {
 }
 
 QPoint Pinky::setTarget() {
-    QPoint target = compass->getPlayerPos(), dire = compass->getPlayerDir();
+    QPoint target = compass->getPlayerLoc(), dire = compass->getPlayerDir();
     target += 4 * QPoint(dire.y(), dire.x());
 
     return target;

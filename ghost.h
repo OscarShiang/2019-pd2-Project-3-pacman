@@ -16,6 +16,7 @@ public:
     void chase();
     void die();
     void setKind(char ipt);
+    void check();
 
     virtual QPoint setTarget() = 0;
 
@@ -29,6 +30,10 @@ public slots:
     void changeMode();
     void nerfInterval();
     void timeLeft();
+    void shining();
+
+signals:
+    void fail();
 
 private:
     QPointF direction;
@@ -37,7 +42,8 @@ private:
     QPoint critical;
     QPixmap pic[4][2];
     QPixmap fright[2][2];
-    QTimer *switchTimer, *chaseTimer, *nerfTimer;
+    QPixmap dead[4];
+    QTimer *switchTimer, *chaseTimer, *nerfTimer, *shine;
     Compass *compass;
     bool nerf;
     int index_i, index_j;
@@ -47,7 +53,7 @@ private:
     char kind;
 
     enum Mode {
-        Scatter,Frighten, Chase
+        Scatter, Frighten, Chase, Dead
     };
 };
 

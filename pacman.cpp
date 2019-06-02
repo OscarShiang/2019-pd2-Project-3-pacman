@@ -38,6 +38,7 @@ void Pacman::move() {
     if (dead)
         return;
     // handling bounding
+    compass->setPos(pos());
     if (y() == 259. && (x() < 0 || x() >= 448)) {
         if (tmpDir == Dir::Left || tmpDir == Dir::Right)
             direction = tmpDir;

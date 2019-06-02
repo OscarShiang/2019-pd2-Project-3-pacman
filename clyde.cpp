@@ -10,10 +10,10 @@ Clyde::Clyde(Compass *compass_ipt): Ghost (compass_ipt), compass(compass_ipt) {
 QPoint Clyde::setTarget() {
     QPoint target;
     QPoint pos(int(y() - 35) / 16, int(x()) / 16);
-    QPoint player = compass->getPlayerPos();
+    QPoint player = compass->getPlayerLoc();
 
     qreal dis = distance(pos, player);
-    if (dis > 10)
+    if (dis > 15)
         target = player;
     else
         // set to scatter point

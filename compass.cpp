@@ -94,7 +94,7 @@ void Compass::check(QPointF pos, QPoint dir) {
     dir_player = dir;
 }
 
-QPoint Compass::getPlayerPos() {
+QPoint Compass::getPlayerLoc() {
     return player;
 }
 
@@ -144,4 +144,12 @@ QList <QPoint> Compass::remainDots() {
         }
     }
     return list;
+}
+
+void Compass::setPos(QPointF pos) {
+    player_pos = pos;
+}
+
+QPointF Compass::getPlayerPos() {
+    return player_pos;
 }

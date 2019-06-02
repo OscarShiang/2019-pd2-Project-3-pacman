@@ -37,10 +37,6 @@
         <file>pic/ghost/pinky/r2.png</file>
         <file>pic/ghost/pinky/u1.png</file>
         <file>pic/ghost/pinky/u2.png</file>
-        <file>pic/ghost/dead/die-d.png</file>
-        <file>pic/ghost/dead/die-l.png</file>
-        <file>pic/ghost/dead/die-r1.png</file>
-        <file>pic/ghost/dead/die-u.png</file>
         <file>pic/ghost/nerf/nerf01.png</file>
         <file>pic/ghost/nerf/nerf02.png</file>
         <file>pic/ghost/nerf/nerf11.png</file>
@@ -60,5 +56,9 @@
         <file>pic/pacman/dead/8.png</file>
         <file>pic/pacman/dead/9.png</file>
         <file>pic/pacman/dead/10.png</file>
+        <file>pic/ghost/dead/d.png</file>
+        <file>pic/ghost/dead/l.png</file>
+        <file>pic/ghost/dead/r.png</file>
+        <file>pic/ghost/dead/u.png</file>
     </qresource>
 </RCC>
