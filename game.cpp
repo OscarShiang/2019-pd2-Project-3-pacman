@@ -69,12 +69,17 @@ Game::Game() {
     connect(inky, SIGNAL(fail()), this, SLOT(gameFail()));
     connect(clyde, SIGNAL(fail()), this, SLOT(gameFail()));
 
+    connect(blinky, SIGNAL(collide()), this, SLOT(ghostKill()));
+    connect(pinky, SIGNAL(collide()), this, SLOT(ghostKill()));
+    connect(inky, SIGNAL(collide()), this, SLOT(ghostKill()));
+    connect(clyde, SIGNAL(collide()), this, SLOT(ghostKill()));
+
     // create the dashboard
     board = new Dashboard(this);
     scene->addItem(board);
     board->hide();
 
-    title = new QGraphicsPixmapItem(QPixmap(":/pic/item/title.png").scaledToWidth(350));
+    title = new QGraphicsPixmapItem(QPixmap(":/pic/item/title.png").scaledToWidth(350, Qt::SmoothTransformation));
     title->setPos(width / 2 - title->boundingRect().width() / 2, 100);
     scene->addItem(title);
 
@@ -89,6 +94,25 @@ Game::Game() {
     connect(play, SIGNAL(clicked()), this, SLOT(gameStart()));
     connect(quit, SIGNAL(clicked()), this, SLOT(close()));
 
+    // initialize the result panel
+    result = new QGraphicsTextItem();
+    score = new QGraphicsTextItem();
+    result->setFont(QFont("Joystix", 50));
+    result->setDefaultTextColor(Qt::white);
+    scene->addItem(result);
+    score->setFont(QFont("Joystix", 25));
+    score->setDefaultTextColor(Qt::white);
+    scene->addItem(score);
+
+    // buttons
+    again = new Button("again", 30);
+    back = new Button("back", 30);
+    scene->addItem(again);
+    scene->addItem(back);
+
+    connect(back, SIGNAL(clicked()), this, SLOT(displayMenu()));
+    connect(again, SIGNAL(clicked()), this, SLOT(gameStart()));
+
     show();
 }
 
@@ -102,7 +126,7 @@ void Game::keyPressEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Right)
         player->setDirection(Dir::Right);
     else if (event->key() == Qt::Key_Space) {
-        wait(1);
+        gameClear();
     }
 }
 
@@ -175,6 +199,7 @@ void Game::gameStart() {
     mode = Mode::Play;
 
     // put the dots and pellets on the map
+    compass->initMap();
     putDots();
 
     // set timer start
@@ -187,27 +212,40 @@ void Game::gameStart() {
     remainDots = 240;
 
     board->reset();
+    resume();
 
     // hide the items not used in playing mode
     menuPanel(false);
+    resultPanel(false);
 
     // show the items
     playPanel(true);
 }
 
 void Game::gameClear() {
-    // game clear
-    qDebug() << "endgame";
+    // elements control
+    pause();
+    playPanel(false);
+    resultPanel(true);
+    clearDots();
+
+    // set the text
+    result->setPlainText("game clear");
+    result->setPos(width / 2 - result->boundingRect().width() / 2, 80);
+
+    score->setPlainText("Your score: " + QString::number(board->getScore()) + "\n\nHigh score: " + QString::number(board->getHighScore()));
+    score->setPos(50, 230);
+
+    again->setPos(width / 2 - 200, 350);
+    back->setPos(width / 2 + 20, 350);
 }
 
 void Game::gameFail() {
     mode = Mode::Result;
-    pacmanMove->stop();
-    ghostMove->stop();
-    blinky->hide();
-    pinky->hide();
-    inky->hide();
-    clyde->hide();
+    pause();
+    playPanel(false);
+    player->show();
+    board->show();
 
     player->die();
     clearDots();
@@ -216,7 +254,6 @@ void Game::gameFail() {
 void Game::clearDots() {
     QList <QPoint> list = compass->remainDots();
     foreach(QPoint pos, list) {
-        qDebug() << pos;
         delete item[pos.x()][pos.y()];
     }
 }
@@ -272,4 +309,29 @@ void Game::countDown() {
         lag->stop();
         resume();
     }
+}
+
+void Game::ghostKill() {
+    wait(0.5);
+}
+
+void Game::resultPanel(bool ipt) {
+    if (ipt) {
+        result->show();
+        score->show();
+        again->show();
+        back->show();
+    }
+    else {
+        result->hide();
+        score->hide();
+        again->hide();
+        back->hide();
+    }
+}
+
+void Game::displayMenu() {
+    menuPanel(true);
+    playPanel(false);
+    resultPanel(false);
 }

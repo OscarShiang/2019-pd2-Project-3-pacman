@@ -196,7 +196,7 @@ void Ghost::changeMode() {
         mode = Mode::Scatter;
 //        qDebug() << "start scatter";
     }
-    else if (mode == Mode::Scatter) {
+    else {
         chaseTimer->setInterval(20000);
         mode = Mode::Chase;
 //        qDebug() << "start chase";
@@ -225,6 +225,7 @@ void Ghost::timeLeft() {
 }
 
 void Ghost::die() {
+    emit collide();
     step_size = 2;
     mode = Mode::Dead;
     nerfTimer->stop();
@@ -248,12 +249,12 @@ void Ghost::check() {
                 die();
             else {
                 // emit the signal to end the game
-//                emit fail();
+                emit fail();
             }
         }
     }
     else  if (pos() == QPointF(224, 211)) {
-        mode = prevMode;
+        mode = Mode::Chase;
         chaseTimer->start();
         step_size = 1;
     }

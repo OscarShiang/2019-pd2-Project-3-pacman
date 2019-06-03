@@ -12,6 +12,9 @@ public:
     void addScore(int ipt);
     void reset();
 
+    int getScore();
+    int getHighScore();
+
 private:
     int score, high;
     QGraphicsTextItem *text_score;

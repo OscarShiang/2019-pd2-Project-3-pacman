@@ -40,5 +40,13 @@ void Dashboard::addScore(int ipt) {
 void Dashboard::reset() {
     score = 0;
     text_score->setPlainText(QString::number(score));
-    text_score->setPos(448 - text_score->boundingRect().width() - 10, 0);
+    text_score->setPos(448 - text_score->boundingRect().width() - 5, 0);
+}
+
+int Dashboard::getScore() {
+    return score;
+}
+
+int Dashboard::getHighScore() {
+    return high;
 }

@@ -36,7 +36,6 @@ public:
     void resultPanel(bool ipt);
 
     // mode control
-    void displayMenu();
     void gameClear();
 
     Dashboard *board;
@@ -46,8 +45,10 @@ public slots:
     void dotsAte();
     void pelletAte();
     void countDown();
+    void ghostKill();
 
     // end game control
+    void displayMenu();
     void gameStart();
     void gameFail();
 
@@ -66,13 +67,14 @@ private:
     QGraphicsPixmapItem *title;
     Button *play, *quit;
 
-    // buttons
-    Button *test;
-
     // for game playing
     Character *player, *blinky, *pinky, *inky, *clyde;
     Compass *compass;
     QTimer *pacmanMove, *shine, *ghostMove, *lag;
+
+    // for result showing
+    QGraphicsTextItem *result, *score;
+    Button *again, *back;
 };
 
 enum Mode {

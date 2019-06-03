@@ -13,7 +13,7 @@ QPoint Clyde::setTarget() {
     QPoint player = compass->getPlayerLoc();
 
     qreal dis = distance(pos, player);
-    if (dis > 15)
+    if (dis > 128)
         target = player;
     else
         // set to scatter point

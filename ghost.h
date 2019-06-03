@@ -36,6 +36,7 @@ public slots:
 
 signals:
     void fail();
+    void collide();
 
 private:
     QPointF direction;

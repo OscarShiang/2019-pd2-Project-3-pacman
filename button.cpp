@@ -30,11 +30,15 @@ void Button::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     timer->start();
+    text->setFont(QFont(font_family, font_size + 3));
+    icon->setY(text->boundingRect().height() / 2 - icon->boundingRect().height() / 2);
 }
 
 void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     timer->stop();
     icon->setPixmap(pic[1]);
+    text->setFont(QFont(font_family, font_size));
+    icon->setY(text->boundingRect().height() / 2 - icon->boundingRect().height() / 2);
 }
 
 qreal Button::width() {
