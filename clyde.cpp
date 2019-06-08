@@ -1,10 +1,15 @@
 #include "clyde.h"
+#include <QEventLoop>
+#include <QDebug>
 
 Clyde::Clyde(Compass *compass_ipt): Ghost (compass_ipt), compass(compass_ipt) {
     loadPicture(":/pic/ghost/clyde/");
     setCritical(QPoint(27, 1));
-    setDirection(Dir::Left);
+    setInitDirection(Dir::Down);
+    setMode(Mode::Home);
     setKind('c');
+
+    tmr = new QTimer();
 }
 
 QPoint Clyde::setTarget() {
@@ -19,4 +24,23 @@ QPoint Clyde::setTarget() {
         // set to scatter point
         target = QPoint(27, 1);
     return target;
+}
+
+void Clyde::sendOut() {
+    disconnect(tmr, SIGNAL(timeout()), this, SLOT(sendOut()));
+    QEventLoop loop;
+    setInitDirection(Dir::Left);
+    connect(tmr, SIGNAL(timeout()), &loop, SLOT(quit()));
+    tmr->start(352);
+    loop.exec();
+    setInitDirection(Dir::Up);
+    home = false;
+}
+
+void Clyde::restore() {
+    Ghost::restore();
+    setMode(Mode::Home);
+    setInitDirection(Dir::Down);
+    connect(tmr, SIGNAL(timeout()), this, SLOT(sendOut()));
+    tmr->start(10560);
 }

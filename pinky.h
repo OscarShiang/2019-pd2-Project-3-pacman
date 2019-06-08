@@ -13,6 +13,10 @@ public:
     Pinky(Compass *compass_ipt);
 
     QPoint setTarget();
+    void restore();
+
+public slots:
+    void sendOut();
 
 private:
     Compass *compass;

@@ -12,6 +12,7 @@ class Blinky: public Ghost {
 public:
     Blinky(Compass *compass_ipt);
     QPoint setTarget();
+    void sendOut();
 
 private:
     Compass *compass;

@@ -6,10 +6,13 @@
 
 Pinky::Pinky(Compass *compass_ipt): Ghost(compass_ipt), compass(compass_ipt) {
     // set the origin point of the character
-    setDirection(Dir::Left);
+    setInitDirection(Dir::Up);
     loadPicture(":/pic/ghost/pinky/");
     setCritical(QPoint(1, 1));
     setKind('p');
+    setMode(Mode::Home);
+
+    tmr = new QTimer();
 }
 
 QPoint Pinky::setTarget() {
@@ -17,4 +20,16 @@ QPoint Pinky::setTarget() {
     target += 4 * QPoint(dire.y(), dire.x());
 
     return target;
+}
+
+void Pinky::sendOut() {
+    home = false;
+}
+
+void Pinky::restore() {
+    Ghost::restore();
+    setInitDirection(Dir::Up);
+    setMode(Mode::Home);
+    connect(tmr, SIGNAL(timeout()), this, SLOT(sendOut()));
+    tmr->start(1760);
 }

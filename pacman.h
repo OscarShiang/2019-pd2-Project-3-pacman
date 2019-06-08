@@ -15,6 +15,7 @@ public:
     void start();
     void pause();
     void die();
+    void restore();
 
 public slots:
     void move();

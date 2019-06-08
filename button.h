@@ -17,6 +17,8 @@ public:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
+    void restore();
+
     qreal width();
     qreal height();
 

@@ -101,9 +101,11 @@ void Pacman::switchAnimate() {
             add = -add;
     }
     else {
-        setPixmap(disolve[index]);
-        index += add;
-        if (index > 10) {
+        if (index < 11) {
+            setPixmap(disolve[index]);
+            index += add;
+        }
+        else if (index >= 11) {
             switchTimer->stop();
             dead = false;
             hide();
@@ -128,4 +130,15 @@ void Pacman::pause() {
 
 void Pacman::start() {
     switchTimer->start();
+}
+
+void Pacman::restore() {
+    direction = QPoint(0, 0);
+    tmpDir = QPoint(0, 0);
+    setPixmap(pic[0]);
+    switchTimer->stop();
+    compass->setPos(pos());
+    dead = false;
+    index = 0;
+    add = 1;
 }

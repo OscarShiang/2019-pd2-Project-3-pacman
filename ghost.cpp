@@ -1,10 +1,11 @@
 #include "ghost.h"
 #include <QDebug>
+#include <QEventLoop>
 
 Ghost::Ghost(Compass *compass_ipt): compass(compass_ipt) {
     setOffset(QPoint(-8, -8));
     tmpDir = QPoint(-1, -1);
-    direction = Dir::Right;
+    direction = QPointF(0, 0);
 
     connect(compass, SIGNAL(powerUp()), this, SLOT(nerfInterval()));
 
@@ -21,8 +22,6 @@ Ghost::Ghost(Compass *compass_ipt): compass(compass_ipt) {
 
     shine = new QTimer();
     connect(shine, SIGNAL(timeout()), this, SLOT(shining()));
-
-    mode = Mode::Chase;
 
     step_size = 1;
 
@@ -45,11 +44,22 @@ Ghost::Ghost(Compass *compass_ipt): compass(compass_ipt) {
     index_j = 0;
 
     nerf = false;
+    home = false;
+    remainNerf = 0;
 }
 
 void Ghost::move() {
     // check for the pos
     check();
+
+//    if (kind == 'c')
+//        qDebug() << pos();
+    if (mode == Mode::Home) {
+        setPos(pos() + direction * step_size);
+        if (((y() <= 249) && home) || y() >= 269)
+            direction = -direction;
+        return;
+    }
     if ((x() < 0 || x() >= 448)) {
         setPos(pos() + direction * step_size);
         if (x() < -32){
@@ -110,7 +120,7 @@ void Ghost::loadPicture(QString filepath) {
 }
 
 void Ghost::switchAnimate() {
-    if (mode == Mode::Scatter || mode == Mode::Chase || mode == Mode::Dead) {
+    if (mode != Mode::Frighten) {
         if (direction == Dir::Up)
             index_i = 0;
         else if (direction == Dir::Down)
@@ -125,7 +135,7 @@ void Ghost::switchAnimate() {
         else
             setPixmap(pic[index_i][index_j]);
     }
-    else if (mode == Mode::Frighten)
+    else
         setPixmap(fright[index_i][index_j]);
 
     index_j ++;
@@ -204,19 +214,26 @@ void Ghost::changeMode() {
 }
 
 void Ghost::nerfInterval() {
+    if (home)
+        return;
     chaseTimer->stop();
-    prevMode = mode;
+    if (mode != Mode::Frighten)
+        prevMode = mode;
     mode = Mode::Frighten;
-    remainNerf = 6;
+    remainNerf += 6;
     nerfTimer->start(1000);
     index_i = 1;
 }
 
 void Ghost::timeLeft() {
     remainNerf --;
-    if (remainNerf <= 3)
+    if (remainNerf > 3) {
+        index_i = 1;
+        shine->stop();
+    }
+    else if (remainNerf <= 3 && remainNerf > 0)
         shine->start(200);
-    if (remainNerf <= 0) {
+    else if (remainNerf <= 0) {
         chaseTimer->start();
         mode = prevMode;
         shine->stop();
@@ -225,13 +242,21 @@ void Ghost::timeLeft() {
 }
 
 void Ghost::die() {
+    // emit the collide event and change the mode
     emit collide();
     step_size = 2;
     mode = Mode::Dead;
+
+    // deal with the nerf mode end
     nerfTimer->stop();
+    remainNerf = 0;
     shine->stop();
+
+    // reposition to the coordinate
     setPos(int(x()) / 16 * 16, int(y() - 35) / 16 * 16 + 35);
     qDebug() << "the ghost is dead" << pos();
+
+    // turn off the mode change timer
     chaseTimer->stop();
 }
 
@@ -240,7 +265,24 @@ void Ghost::setKind(char ipt) {
 }
 
 void Ghost::check() {
-    if (mode != Mode::Dead) {
+    if (y() == 211. && mode == Mode::Home) {
+        mode = Mode::Chase;
+        chaseTimer->start();
+        tmpDir = QPoint(-1, -1);
+
+        // decide which direction should go
+        QPoint arrow[2] = {Dir::Left, Dir::Right};
+        QPoint target = setTarget(), choice;
+        qreal length = 9999999;
+        for (int a = 0; a < 2; a ++) {
+            if (distance(target, QPoint(int(y() - 35) / 16, int(x()) / 16)) < length) {
+                length = distance(target, QPoint(int(y() - 35) / 16 + arrow[a].y(), int(x()) / 16 + arrow[a].x()));
+                choice = arrow[a];
+            }
+        }
+        direction = choice;
+    }
+    else if (mode != Mode::Dead) {
         QPointF origin = pos() + QPointF(boundingRect().width() / 2 - 8, boundingRect().height() / 2 - 8);
         QPointF player = compass->getPlayerPos() - QPointF(7, 7) + QPointF(15, 15);
 
@@ -253,9 +295,11 @@ void Ghost::check() {
             }
         }
     }
-    else  if (pos() == QPointF(224, 211)) {
-        mode = Mode::Chase;
-        chaseTimer->start();
+    else  if (pos() == QPointF(216, 211) && mode == Mode::Dead)
+        direction = Dir::Down;
+    else if (pos() == QPointF(216, 259) && mode == Mode::Dead) {
+        direction = Dir::Up;
+        mode = Mode::Home;
         step_size = 1;
     }
 }
@@ -271,12 +315,37 @@ void Ghost::pause() {
     nerfTimer->stop();
     shine->stop();
     switchTimer->stop();
+    tmr->stop();
 }
 
 void Ghost::start() {
     switchTimer->start();
     if (mode == Mode::Frighten)
         nerfTimer->start();
-    else
+    else if (mode != Mode::Home)
         chaseTimer->start();
+    else
+        tmr->start();
+}
+
+void Ghost::restore() {
+    mode = Mode::Chase;
+    step_size = 1;
+    index_i = 1;
+    index_j = 0;
+    nerf = false;
+    tmpDir = QPoint(-1, -1);
+    direction = Dir::Left;
+}
+
+void Ghost::setInitDirection(QPoint dir) {
+    direction = dir;
+}
+
+void Ghost::setMode(int mode_ipt) {
+    mode = mode_ipt;
+    if (mode == Mode::Home) {
+        chaseTimer->stop();
+        home = true;
+    }
 }

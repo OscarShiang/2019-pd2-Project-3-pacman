@@ -68,7 +68,7 @@ private:
     Button *play, *quit;
 
     // for game playing
-    Character *player, *blinky, *pinky, *inky, *clyde;
+    Character *player, *blinky, *inky, *clyde, *pinky;
     Compass *compass;
     QTimer *pacmanMove, *shine, *ghostMove, *lag;
 

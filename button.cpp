@@ -56,3 +56,10 @@ void Button::change() {
     if (i <= 0 || i >= 2)
         add = -add;
 }
+
+void Button::restore() {
+    timer->stop();
+    icon->setPixmap(pic[1]);
+    text->setFont(QFont(font_family, font_size));
+    icon->setY(text->boundingRect().height() / 2 - icon->boundingRect().height() / 2);
+}

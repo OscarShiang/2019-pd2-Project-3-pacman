@@ -86,10 +86,10 @@ void Compass::check(QPointF pos, QPoint dir) {
     int y = int(pos.x()) / 16;
 
     if (map[x][y] != 0 && map[x][y] != -1) {
-        emit eat(QPoint(x, y));
         if (map[x][y] == 2)
             emit powerUp();
         map[x][y] = -1;
+        emit eat(QPoint(x, y));
     }
     dir_player = dir;
 }

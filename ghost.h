@@ -15,10 +15,14 @@ public:
     void start();
     void pause();
     void setDirection(QPoint dir);
+    void setInitDirection(QPoint dir);
+    void setMode(int mode_ipt);
     void chase();
     void die();
+    void restore();
     void setKind(char ipt);
     void check();
+    virtual void sendOut() = 0;
 
     virtual QPoint setTarget() = 0;
 
@@ -55,9 +59,13 @@ private:
     qreal step_size;
     char kind;
 
+protected :
+    QTimer *tmr;
+    bool home;
     enum Mode {
-        Scatter, Frighten, Chase, Dead
+        Scatter, Frighten, Chase, Dead, Home
     };
 };
+
 
 #endif // GHOST_H

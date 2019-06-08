@@ -12,6 +12,7 @@ public:
     virtual void die() = 0;
     virtual void start() = 0;
     virtual void pause() = 0;
+    virtual void restore() = 0;
 
 public slots:
     virtual void move() = 0;

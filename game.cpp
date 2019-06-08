@@ -3,6 +3,7 @@
 #include "dot.h"
 #include "pellet.h"
 #include <QDebug>
+#include <QEventLoop>
 
 Game::Game() {
     // set up the widow
@@ -117,6 +118,9 @@ Game::Game() {
 }
 
 void Game::keyPressEvent(QKeyEvent *event) {
+    if (mode != Mode::Play)
+        return;
+
     if (event->key() == Qt::Key_Up)
         player->setDirection(Dir::Up);
     else if (event->key() == Qt::Key_Down)
@@ -185,7 +189,7 @@ void Game::resume() {
 void Game::dotsAte() {
     board->addScore(10);
     remainDots --;
-    qDebug() << remainDots;
+//    qDebug() << remainDots;
     if (!remainDots)
         gameClear();
 }
@@ -207,12 +211,24 @@ void Game::gameStart() {
     ghostMove->start(11);
     shine->start(300);
 
+    // set the characters' pos
     player->setPos(width / 2 - player->boundingRect().width() / 2 + 7, 403);
+    blinky->setPos(width / 2 - blinky->boundingRect().width() / 2 + 8, 211);
+    pinky->setPos(width / 2 - pinky->boundingRect().width() / 2 + 8, 259);
+    inky->setPos(width / 2 - pinky->boundingRect().width() / 2 - 24, 259);
+    clyde->setPos(width / 2 - pinky->boundingRect().width() / 2 + 40, 259);
 
     remainDots = 240;
 
     board->reset();
     resume();
+//    pause();
+
+    player->restore();
+    blinky->restore();
+    pinky->restore();
+    clyde->restore();
+    inky->restore();
 
     // hide the items not used in playing mode
     menuPanel(false);
@@ -236,19 +252,42 @@ void Game::gameClear() {
     score->setPlainText("Your score: " + QString::number(board->getScore()) + "\n\nHigh score: " + QString::number(board->getHighScore()));
     score->setPos(50, 230);
 
-    again->setPos(width / 2 - 200, 350);
+    again->setPos(width / 2 - 170, 350);
     back->setPos(width / 2 + 20, 350);
 }
 
 void Game::gameFail() {
     mode = Mode::Result;
     pause();
+    player->restore();
+
+    QEventLoop loop;
+    connect(lag, SIGNAL(timeout()), &loop, SLOT(quit()));
+    lag->start(500);
+    loop.exec();
+
     playPanel(false);
     player->show();
     board->show();
-
     player->die();
+
+    lag->start(680);
+    loop.exec();
+
     clearDots();
+
+    playPanel(false);
+    resultPanel(true);
+
+    // set the text
+    result->setPlainText("game fail");
+    result->setPos(width / 2 - result->boundingRect().width() / 2, 80);
+
+    score->setPlainText("Your score: " + QString::number(board->getScore()) + "\n\nHigh score: " + QString::number(board->getHighScore()));
+    score->setPos(50, 230);
+
+    again->setPos(width / 2 - 170, 350);
+    back->setPos(width / 2 + 20, 350);
 }
 
 void Game::clearDots() {
@@ -259,6 +298,15 @@ void Game::clearDots() {
 }
 
 void Game::menuPanel(bool ipt) {
+    // define the layer objects should stay
+    title->setZValue(2);
+    play->setZValue(2);
+    quit->setZValue(2);
+
+    // restore the buttons
+    play->restore();
+    quit->restore();
+
     if (ipt) {
         title->show();
         play->show();
@@ -272,6 +320,14 @@ void Game::menuPanel(bool ipt) {
 }
 
 void Game::playPanel(bool ipt) {
+    // define the layer objects should stay
+    player->setZValue(1);
+    blinky->setZValue(1);
+    inky->setZValue(1);
+    pinky->setZValue(1);
+    clyde->setZValue(1);
+    board->setZValue(1);
+
     if (ipt) {
         // show the character
         player->show();
@@ -316,6 +372,16 @@ void Game::ghostKill() {
 }
 
 void Game::resultPanel(bool ipt) {
+    // define the layer objects should stay
+    result->setZValue(2);
+    score->setZValue(2);
+    again->setZValue(2);
+    back->setZValue(2);
+
+    // restore the apperance of the buttons
+    again->restore();
+    back->restore();
+
     if (ipt) {
         result->show();
         score->show();
