@@ -2,6 +2,7 @@
 #include "pacman.h"
 #include "dot.h"
 #include "pellet.h"
+#include "ghost.h"
 #include <QDebug>
 #include <QEventLoop>
 
@@ -28,7 +29,6 @@ Game::Game() {
 
     // create the lag timer for anytime the game should pause a little
     lag = new QTimer(this);
-    connect(lag, SIGNAL(timeout()), this, SLOT(countDown()));
 
     // create the pacman (the player)
     player = new Pacman(compass);
@@ -54,6 +54,7 @@ Game::Game() {
 
     // create the move timer
     pacmanMove = new QTimer(this);
+
     // player move
     connect(pacmanMove, SIGNAL(timeout()), player, SLOT(move()));
 
@@ -70,10 +71,10 @@ Game::Game() {
     connect(inky, SIGNAL(fail()), this, SLOT(gameFail()));
     connect(clyde, SIGNAL(fail()), this, SLOT(gameFail()));
 
-    connect(blinky, SIGNAL(collide()), this, SLOT(ghostKill()));
-    connect(pinky, SIGNAL(collide()), this, SLOT(ghostKill()));
-    connect(inky, SIGNAL(collide()), this, SLOT(ghostKill()));
-    connect(clyde, SIGNAL(collide()), this, SLOT(ghostKill()));
+    connect(blinky, SIGNAL(collide(Ghost *)), this, SLOT(ghostKill(Ghost *)));
+    connect(pinky, SIGNAL(collide(Ghost *)), this, SLOT(ghostKill(Ghost *)));
+    connect(inky, SIGNAL(collide(Ghost *)), this, SLOT(ghostKill(Ghost *)));
+    connect(clyde, SIGNAL(collide(Ghost *)), this, SLOT(ghostKill(Ghost *)));
 
     // create the dashboard
     board = new Dashboard(this);
@@ -111,6 +112,28 @@ Game::Game() {
     scene->addItem(again);
     scene->addItem(back);
 
+    // pause panel initialize
+    message = new QGraphicsTextItem();
+    message->setDefaultTextColor(Qt::white);
+    message->setFont(QFont("Joystix", 50));
+    message->setPlainText("pause");
+    scene->addItem(message);
+    message->hide();
+
+    conti = new Button("resume", 30);
+    scene->addItem(conti);
+    conti->hide();
+
+    conti->setPos(width / 2 - play->width() / 2, 280);
+    back->setPos(width / 2 - quit->width() / 2, 340);
+
+    conti->setZValue(2);
+
+    connect(conti, SIGNAL(clicked()), this, SLOT(gamePause()));
+
+    message->setPos(width / 2 - message->boundingRect().width() / 2, 100);
+    message->setZValue(2);
+
     connect(back, SIGNAL(clicked()), this, SLOT(displayMenu()));
     connect(again, SIGNAL(clicked()), this, SLOT(gameStart()));
 
@@ -118,19 +141,30 @@ Game::Game() {
 }
 
 void Game::keyPressEvent(QKeyEvent *event) {
-    if (mode != Mode::Play)
-        return;
-
-    if (event->key() == Qt::Key_Up)
-        player->setDirection(Dir::Up);
-    else if (event->key() == Qt::Key_Down)
-        player->setDirection(Dir::Down);
-    else if (event->key() == Qt::Key_Left)
-        player->setDirection(Dir::Left);
-    else if (event->key() == Qt::Key_Right)
-        player->setDirection(Dir::Right);
-    else if (event->key() == Qt::Key_Space) {
-        gameClear();
+    if (mode == Mode::Play) {
+        if (event->key() == Qt::Key_Up)
+            player->setDirection(Dir::Up);
+        else if (event->key() == Qt::Key_Down)
+            player->setDirection(Dir::Down);
+        else if (event->key() == Qt::Key_Left)
+            player->setDirection(Dir::Left);
+        else if (event->key() == Qt::Key_Right)
+            player->setDirection(Dir::Right);
+        else if (event->key() == Qt::Key_Space) {
+            gameClear();
+        }
+        else if (event->key() == Qt::Key_Escape) {
+            mode = Mode::Pause;
+            pause();
+            pausePanel(true);
+        }
+    }
+    else if (mode == Mode::Pause) {
+        if (event->key() == Qt::Key_Escape) {
+            mode = Mode::Play;
+            resume();
+            pausePanel(false);
+        }
     }
 }
 
@@ -189,13 +223,13 @@ void Game::resume() {
 void Game::dotsAte() {
     board->addScore(10);
     remainDots --;
-//    qDebug() << remainDots;
     if (!remainDots)
         gameClear();
 }
 
 void Game::pelletAte() {
     board->addScore(50);
+    times = 0;
 }
 
 void Game::gameStart() {
@@ -230,6 +264,8 @@ void Game::gameStart() {
     clyde->restore();
     inky->restore();
 
+    connect(lag, SIGNAL(timeout()), this, SLOT(countDown()));
+
     // hide the items not used in playing mode
     menuPanel(false);
     resultPanel(false);
@@ -257,10 +293,10 @@ void Game::gameClear() {
 }
 
 void Game::gameFail() {
+    disconnect(lag, SIGNAL(timeout()), this, SLOT(countDown()));
     mode = Mode::Result;
     pause();
     player->restore();
-
     QEventLoop loop;
     connect(lag, SIGNAL(timeout()), &loop, SLOT(quit()));
     lag->start(500);
@@ -355,20 +391,20 @@ void Game::wait(qreal msec) {
     mode = Mode::Pause;
     lag->start(int(1000 * msec));
     pause();
-    times = 1;
 }
 
 void Game::countDown() {
-    times --;
-    if (!times) {
-        mode = Mode::Play;
-        lag->stop();
-        resume();
-    }
+    mode = Mode::Play;
+    player->show();
+    lag->stop();
+    resume();
 }
 
-void Game::ghostKill() {
+void Game::ghostKill(Ghost *ghost) {
     wait(0.5);
+    player->hide();
+    ghost->setPixmap(QPixmap(":/pic/item/score/" + QString::number(times) + ".png").scaledToHeight(32));
+    board->addScore(int(pow(2, ++ times) * 100));
 }
 
 void Game::resultPanel(bool ipt) {
@@ -400,4 +436,25 @@ void Game::displayMenu() {
     menuPanel(true);
     playPanel(false);
     resultPanel(false);
+    pausePanel(false);
+}
+
+void Game::pausePanel(bool ipt) {
+    if (ipt) {
+        message->show();
+        back->show();
+        conti->show();
+        back->setPos(width / 2 - quit->width() / 2, 340);
+    }
+    else {
+        message->hide();
+        back->hide();
+        conti->hide();
+    }
+}
+
+void Game::gamePause() {
+    resume();
+    pausePanel(false);
+    mode = Mode::Play;
 }

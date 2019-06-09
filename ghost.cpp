@@ -52,8 +52,6 @@ void Ghost::move() {
     // check for the pos
     check();
 
-//    if (kind == 'c')
-//        qDebug() << pos();
     if (mode == Mode::Home) {
         setPos(pos() + direction * step_size);
         if (((y() <= 249) && home) || y() >= 269)
@@ -214,7 +212,7 @@ void Ghost::changeMode() {
 }
 
 void Ghost::nerfInterval() {
-    if (home)
+    if (home || mode == Mode::Home)
         return;
     chaseTimer->stop();
     if (mode != Mode::Frighten)
@@ -243,7 +241,7 @@ void Ghost::timeLeft() {
 
 void Ghost::die() {
     // emit the collide event and change the mode
-    emit collide();
+    emit collide(this);
     step_size = 2;
     mode = Mode::Dead;
 
@@ -265,6 +263,8 @@ void Ghost::setKind(char ipt) {
 }
 
 void Ghost::check() {
+    if (mode == Mode::End)
+        return;
     if (y() == 211. && mode == Mode::Home) {
         mode = Mode::Chase;
         chaseTimer->start();
@@ -291,6 +291,7 @@ void Ghost::check() {
                 die();
             else {
                 // emit the signal to end the game
+                mode = Mode::End;
                 emit fail();
             }
         }

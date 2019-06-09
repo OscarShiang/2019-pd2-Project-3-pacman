@@ -34,6 +34,7 @@ public:
     void menuPanel(bool ipt);
     void playPanel(bool ipt);
     void resultPanel(bool ipt);
+    void pausePanel(bool ipt);
 
     // mode control
     void gameClear();
@@ -45,12 +46,14 @@ public slots:
     void dotsAte();
     void pelletAte();
     void countDown();
-    void ghostKill();
+    void ghostKill(Ghost *ghost);
+
+    void displayMenu();
 
     // end game control
-    void displayMenu();
     void gameStart();
     void gameFail();
+    void gamePause();
 
 private:
     const int width = 448;
@@ -75,6 +78,10 @@ private:
     // for result showing
     QGraphicsTextItem *result, *score;
     Button *again, *back;
+
+    // for pause showing
+    QGraphicsTextItem *message;
+    Button *conti;
 };
 
 enum Mode {

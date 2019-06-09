@@ -40,7 +40,7 @@ public slots:
 
 signals:
     void fail();
-    void collide();
+    void collide(Ghost *ghost);
 
 private:
     QPointF direction;
@@ -63,7 +63,7 @@ protected :
     QTimer *tmr;
     bool home;
     enum Mode {
-        Scatter, Frighten, Chase, Dead, Home
+        Scatter, Frighten, Chase, Dead, Home, End
     };
 };
 

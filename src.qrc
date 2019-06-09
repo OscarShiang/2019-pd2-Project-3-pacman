@@ -60,5 +60,9 @@
         <file>pic/ghost/dead/l.png</file>
         <file>pic/ghost/dead/r.png</file>
         <file>pic/ghost/dead/u.png</file>
+        <file>pic/item/score/0.png</file>
+        <file>pic/item/score/1.png</file>
+        <file>pic/item/score/2.png</file>
+        <file>pic/item/score/4.png</file>
     </qresource>
 </RCC>
