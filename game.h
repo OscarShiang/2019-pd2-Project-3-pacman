@@ -16,6 +16,7 @@
 #include "inky.h"
 #include "clyde.h"
 #include "button.h"
+#include "animaterect.h"
 
 class Game: public QGraphicsView {
     Q_OBJECT
@@ -82,6 +83,8 @@ private:
     // for pause showing
     QGraphicsTextItem *message;
     Button *conti;
+
+    AnimateRect *background;
 };
 
 enum Mode {

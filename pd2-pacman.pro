@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        animaterect.cpp \
         blinky.cpp \
         button.cpp \
         clyde.cpp \
@@ -40,6 +41,7 @@ SOURCES += \
         pinky.cpp
 
 HEADERS += \
+        animaterect.h \
         blinky.h \
         button.h \
         character.h \

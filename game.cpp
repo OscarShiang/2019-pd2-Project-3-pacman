@@ -137,6 +137,10 @@ Game::Game() {
     connect(back, SIGNAL(clicked()), this, SLOT(displayMenu()));
     connect(again, SIGNAL(clicked()), this, SLOT(gameStart()));
 
+    background = new AnimateRect(width, height);
+    scene->addItem(background);
+    background->setZValue(1);
+
     show();
 }
 
@@ -157,6 +161,7 @@ void Game::keyPressEvent(QKeyEvent *event) {
             mode = Mode::Pause;
             pause();
             pausePanel(true);
+            background->fadeIn();
         }
     }
     else if (mode == Mode::Pause) {
@@ -164,6 +169,7 @@ void Game::keyPressEvent(QKeyEvent *event) {
             mode = Mode::Play;
             resume();
             pausePanel(false);
+            background->fadeOut();
         }
     }
 }
@@ -233,6 +239,8 @@ void Game::pelletAte() {
 }
 
 void Game::gameStart() {
+    if (mode == Mode::Result)
+        background->fadeOut();
     // change mode
     mode = Mode::Play;
 
@@ -255,8 +263,6 @@ void Game::gameStart() {
     remainDots = 240;
 
     board->reset();
-    resume();
-//    pause();
 
     player->restore();
     blinky->restore();
@@ -272,9 +278,12 @@ void Game::gameStart() {
 
     // show the items
     playPanel(true);
+
+    wait(0.5);
 }
 
 void Game::gameClear() {
+    background->fadeIn();
     // elements control
     pause();
     playPanel(false);
@@ -314,6 +323,8 @@ void Game::gameFail() {
 
     playPanel(false);
     resultPanel(true);
+
+    background->fadeIn();
 
     // set the text
     result->setPlainText("game fail");
@@ -433,6 +444,14 @@ void Game::resultPanel(bool ipt) {
 }
 
 void Game::displayMenu() {
+    if (mode != Mode::Menu) {
+        background->fadeOut();
+        if (mode == Mode::Pause) {
+            qDebug() << "after play";
+            clearDots();
+        }
+    }
+    mode = Mode::Menu;
     menuPanel(true);
     playPanel(false);
     resultPanel(false);
@@ -440,11 +459,15 @@ void Game::displayMenu() {
 }
 
 void Game::pausePanel(bool ipt) {
+    message->setFont(QFont("Joystix", 50));
+    message->setPlainText("pause");
     if (ipt) {
         message->show();
         back->show();
         conti->show();
         back->setPos(width / 2 - quit->width() / 2, 340);
+        back->restore();
+        conti->restore();
     }
     else {
         message->hide();
@@ -455,6 +478,7 @@ void Game::pausePanel(bool ipt) {
 
 void Game::gamePause() {
     resume();
+    background->fadeOut();
     pausePanel(false);
     mode = Mode::Play;
 }
