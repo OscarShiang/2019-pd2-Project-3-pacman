@@ -1,36 +1,20 @@
-# pd2-pacman
+# QtPacman
+This project is written during the Program Design class in 2019. The whole project is written in C++/Qt and is made to simulate the original game playing.
 
-## Score
-- GUI 5%
-- Dashboard 5%
-- Dots 5%
-- Power Pellets 5%
-- Pac-man 10%
-- Ghost 10%
-- Polymorphism 10%
-- Demo 50%
-- (Bonus up to 20%)
+## How to Play
+The pacman can be control using 4 arrows (`up`, `down`, `left` and `right`) and when you eats all the dots in the map, you successfully clear the game. But when you accidently collide into the ghosts, the game will be over. 
+And you can use `Esc` to pause the game or return to the menu. 
 
-## Power Pellets
+## The algorithm inside the ghosts
+The whole algorithms is referenced from this website
 
-- If the ghost collide with the pac-man and pac-man has eaten power pellets
-    - Pac-man eat the ghost and get the point
-    - ghost die and bring back to life in a few seconds
+## The resources of the pictures for the characters
+All data is modified from the original one on this website
 
-## Pac-man
+## Things can be added 
+1. The pacman can not turn as the original game does, instead, it turns in right angle as the ghosts do. 
+2. There is only ONE life for the player to play, but in the original game, there can be serveral lives for players to play.
+3. There is only one level to play, and the speed of the ghosts can not be modified seperately, this is because I try to control all ghosts' move at the top of the game. 
 
-- Pac-man may keep going straight forward and player can use four keys to change its direction
-- If Pac-man collide with the ghost, game over
-    - You don't need to make pac-man life, it only have one life
+## Playing Screen
 
-## Ghost
-
-- There are four ghosts in the corner of the gameboard
-- Four ghosts should have four different algorithm to chase pac-man
-    - you can take [this](https://en.wikipedia.org/wiki/Pac-Man#Enemy_behavior) as reference
-- If the ghost collide with the pac-man, pac-man die and game over
-
-
-## Polymorphism
-- You should use polymorphism technique on class `Pacman` and `Ghost`.
-- Both of them should implement method `move()`, and be called by pointer of base class.
