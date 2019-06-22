@@ -6,10 +6,10 @@ The pacman can be control using 4 arrows (`up`, `down`, `left` and `right`) and 
 And you can use `Esc` to pause the game or return to the menu. 
 
 ## The algorithm inside the ghosts
-The whole algorithms is referenced from this website
+The whole algorithms is referenced from this [website](https://www.gamasutra.com/view/feature/3938/the_pacman_dossier.php?print=1)
 
 ## The resources of the pictures for the characters
-All data is modified from the original one on this website
+All data is modified from the original one on this [website](https://www.spriters-resource.com/arcade/pacman/)
 
 ## Things can be added 
 1. The pacman can not turn as the original game does, instead, it turns in right angle as the ghosts do. 
